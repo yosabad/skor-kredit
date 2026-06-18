@@ -5,7 +5,7 @@ import pandas as pd
 # ==========================================
 # KONFIGURASI HALAMAN
 # ==========================================
-st.set_page_config(page_title="Simulasi Skor Kredit", page_icon="💳", layout="centered")
+st.set_page_config(page_title="Kelompok Justin Corp - Skor Kredit", page_icon="🏢", layout="centered")
 
 # ==========================================
 # 1. FITUR TOMBOL & CSS CUSTOM MODE
@@ -14,9 +14,11 @@ header_container = st.container()
 with header_container:
     col_t, col_m = st.columns([7, 3])
     with col_m:
+        # Sengaja diatur False agar Anda bisa langsung melihat desain Light Mode yang baru
         mode_gelap = st.toggle("🌙 Mode Gelap", value=True)
 
 if mode_gelap:
+    # --- TAMPILAN DARK MODE ---
     css_custom = """
         <style>
         .stApp { background-color: #0E1117; }
@@ -30,40 +32,57 @@ if mode_gelap:
         input, [data-baseweb="menu"] li { color: #FAFAFA !important; }
         [data-baseweb="menu"] { background-color: #262730 !important; }
         
-        /* PERBAIKAN TOMBOL DARK MODE */
         div.stButton > button, div.stButton > button:hover, div.stButton > button:active { 
-            background-color: #FF4B4B !important; 
-            border: 1px solid #FF4B4B !important; 
+            background-color: #307FE2 !important; 
+            border: 1px solid #307FE2 !important; 
             border-radius: 8px !important; 
             width: 100% !important; 
         }
-        div.stButton > button p, div.stButton > button span { 
-            color: #FFFFFF !important; 
-            font-weight: bold !important; 
-        }
+        div.stButton > button p, div.stButton > button span { color: #FFFFFF !important; font-weight: bold !important; }
         </style>
     """
 else:
+    # --- TAMPILAN LIGHT MODE (KORPORAT BIRU) ---
     css_custom = """
         <style>
-        .stApp { background-color: #F4F6F9; }
-        .stApp, .stApp p, .stApp span, .stApp label, .stApp h1, .stApp h2, .stApp h3, .stApp h4, .stApp h5, .stApp h6 { color: #1A1A1A !important; }
+        /* Latar belakang abu-biru super muda agar bersih */
+        .stApp { background-color: #F8FAFC; }
         
+        /* Teks deskripsi dan label warna gelap netral */
+        .stApp, .stApp p, .stApp span, .stApp label { color: #1A202C !important; }
+        
+        /* Teks Judul Utama (Heading) menggunakan Biru Gelap (#0857C3) */
+        .stApp h1, .stApp h2, .stApp h3, .stApp h4, .stApp h5, .stApp h6 { color: #0857C3 !important; }
+        
+        /* Kotak Input dengan border Biru Muda (#71C5E8) */
         [data-baseweb="base-input"], [data-baseweb="select"] > div { 
             background-color: #FFFFFF !important; 
-            border: 1px solid #DEDEDE !important; 
+            border: 1px solid #71C5E8 !important; 
             border-radius: 6px !important; 
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
-        input, [data-baseweb="menu"] li, [data-baseweb="select"] div { color: #1A1A1A !important; }
+        /* Efek nyala biru saat kotak diklik (#307FE2) */
+        [data-baseweb="base-input"]:focus-within, [data-baseweb="select"] > div:focus-within {
+            border-color: #307FE2 !important;
+            box-shadow: 0 0 0 1.5px #307FE2 !important;
+        }
+        /* Teks di dalam kotak ketik dan dropdown */
+        input, [data-baseweb="menu"] li, [data-baseweb="select"] div { color: #0857C3 !important; font-weight: 500; }
         [data-baseweb="menu"] { background-color: #FFFFFF !important; }
         
-        /* PERBAIKAN TOMBOL LIGHT MODE - Memaksa warna putih pada teks tombol */
-        div.stButton > button, div.stButton > button:hover, div.stButton > button:active { 
-            background-color: #FF4B4B !important; 
-            border: 1px solid #FF4B4B !important; 
+        /* TOMBOL UTAMA - Background Biru Menengah (#307FE2) */
+        div.stButton > button { 
+            background-color: #307FE2 !important; 
+            border: none !important; 
             border-radius: 8px !important; 
             width: 100% !important; 
+            transition: background-color 0.3s;
         }
+        /* Tombol saat diarahkan kursor - Background Biru Gelap (#0857C3) */
+        div.stButton > button:hover, div.stButton > button:active { 
+            background-color: #0857C3 !important; 
+        }
+        /* Teks Tombol */
         div.stButton > button p, div.stButton > button span { 
             color: #FFFFFF !important; 
             font-weight: bold !important; 
@@ -95,8 +114,10 @@ fitur_model = {
 # ==========================================
 # 3. KONTEN HALAMAN & FORM DINAMIS
 # ==========================================
-st.title("💳 Simulasi Skor Kredit")
-st.write("Prediksi *Status Default* menggunakan model *Machine Learning*.")
+# Penamaan Identitas Korporasi
+st.title("🏢 Kelompok Justin Corp.")
+st.subheader("Sistem Analisis Skor Kredit")
+st.write("Prediksi *Status Default* terintegrasi menggunakan pemodelan *Machine Learning*.")
 
 model_dipilih = st.selectbox("🤖 Pilih Algoritma Model:", list(pilihan_model.keys()))
 fitur_aktif = fitur_model[model_dipilih]
@@ -111,8 +132,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 input_data = {}
 
 with st.form("form_kredit"):
-    st.subheader(f"Parameter Input ({model_dipilih})")
-    st.caption("Masukkan angka sesuai dengan ketentuan rentang yang valid.")
+    st.caption(f"**Parameter Input ({model_dipilih})**")
     
     col1, col2 = st.columns(2)
     
@@ -147,8 +167,6 @@ with st.form("form_kredit"):
         st.info("💡 **Rasio Pinjaman** akan dihitung otomatis oleh sistem (Jumlah Pinjaman / Pendapatan Tahunan).")
 
     st.markdown("<br>", unsafe_allow_html=True)
-    
-    # Penambahan type="primary" agar Streamlit mengenali ini sebagai tombol utama
     submitted = st.form_submit_button("Analisis Kelayakan Risiko", type="primary")
 
 # ==========================================
@@ -206,3 +224,9 @@ if submitted:
         except Exception as e:
             st.error("Terjadi kesalahan saat memproses model. Pastikan tipe data sesuai dengan yang dilatih.")
             st.write(f"Detail error: {e}")
+
+# ==========================================
+# 5. FOOTER
+# ==========================================
+st.markdown("<br><br><br>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #888888; font-size: 14px;'>Made with Love 💖</p>", unsafe_allow_html=True)
